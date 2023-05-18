@@ -1,8 +1,14 @@
 import React from 'react';
+import { AppShell } from '@mantine/core';
+import Aside from '../../component/Navbar/navbar';
 
 
 const findPlayer = () => {
-    return <h1>Find Player</h1>
+    return <div>
+       <AppShell navbar={<Aside />}>
+        <h1>Find palyer</h1>
+       </AppShell>
+    </div>
 }
 
 
