@@ -1,5 +1,6 @@
 import React, { Suspense } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+// import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import {Loader} from '@mantine/core' 
 
 const Home = React.lazy(() => import("./pages/home/home"));
@@ -7,21 +8,21 @@ const NotFound = React.lazy(() => import("./pages/404/404"));
 const FindPlayer = React.lazy(() => import("./pages/find_player/find_player"));
 const Player = React.lazy(() => import("./pages/player/player"));
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Home />,
-    errorElement: <NotFound />,
-  },
-  {
-    path: "find",
-    element: <FindPlayer />,
-  },
-  {
-    path: "me",
-    element: <Player />,
-  },
-]);
+// const router = createBrowserRouter([
+//   {
+//     path: "/",
+//     element: <Home />,
+//     errorElement: <NotFound />,
+//   },
+//   {
+//     path: "find",
+//     element: <FindPlayer />,
+//   },
+//   {
+//     path: "me",
+//     element: <Player />,
+//   },
+// ]);
 
 function App() {
   return (
@@ -34,7 +35,15 @@ function App() {
           alignItems: "center"
         }}
       ><Loader /></div>}>
-        <RouterProvider router={router} />
+        {/* <RouterProvider router={router} /> */}
+        <Router >
+          <Routes>  
+              <Route exact path="/" element={<Home />} />
+              <Route exact path="/find" element={<FindPlayer />} />
+              <Route exact path="/me" element={<Player />} />
+              <Route path="*" element={<NotFound />}/>
+          </Routes>
+        </Router>
       </Suspense>
     </React.Fragment>
   );
