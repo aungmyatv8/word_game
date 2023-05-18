@@ -12,6 +12,7 @@ const Home = () => {
 
     useEffect(() => {
         // 
+        // localStorage.setItem('items', JSON.stringify(items));
         window.google.accounts.id.initialize({
             client_id: "286833238810-a9nn4u2imlfb011oisnoitb64b9otvm3.apps.googleusercontent.com",
             callback: handleCallbackResponse

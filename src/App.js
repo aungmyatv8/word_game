@@ -1,14 +1,16 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import HomePage from "./pages/home/home";
-import NotFound from "./pages/404/404";
-import FindPlayer from "./pages/find_player/find_player";
-import Player from './pages/player/player';
+import {Loader} from '@mantine/core' 
+
+const Home = React.lazy(() => import("./pages/home/home"));
+const NotFound = React.lazy(() => import("./pages/404/404"));
+const FindPlayer = React.lazy(() => import("./pages/find_player/find_player"));
+const Player = React.lazy(() => import("./pages/player/player"));
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <HomePage />,
+    element: <Home />,
     errorElement: <NotFound />,
   },
   {
@@ -17,14 +19,23 @@ const router = createBrowserRouter([
   },
   {
     path: "me",
-    element: <Player />
-  }
+    element: <Player />,
+  },
 ]);
 
 function App() {
   return (
     <React.Fragment>
-      <RouterProvider router={router} />
+      <Suspense fallback={<div
+        style={{
+          display: "flex",
+          height: "100vh",
+          justifyContent: "center",
+          alignItems: "center"
+        }}
+      ><Loader /></div>}>
+        <RouterProvider router={router} />
+      </Suspense>
     </React.Fragment>
   );
 }
