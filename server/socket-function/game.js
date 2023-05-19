@@ -4,6 +4,7 @@ const Io = get().of('/match');
 
 
 Io.on("connection", (socket) => {
+    console.log("connection started")
     socket.on("disconnect", () => {
         // console.log("disconnecting");
         socket.conn.close();
@@ -12,10 +13,10 @@ Io.on("connection", (socket) => {
 
     // find two player based on level
     // emit both player with match id
-    socket.on("find-match")
+    // socket.on("find-match")
     
     
-    socket.on(`r`)
+    // socket.on(`r`)
 
 })
 

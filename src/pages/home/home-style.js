@@ -4,7 +4,7 @@ import Background from '../../background.jpg'
 export const useStyles = createStyles(() => ({
    background: {
     width: "100vw",
-    height: "100vh",
+    minHeight: "100vh",
     background: `url(${Background})`,
     backgroundSize: "cover",
    },
