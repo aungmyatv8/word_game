@@ -1,6 +1,4 @@
-import React from 'react';
-
-
+import React from "react";
 import { AppShell, Center, Title } from "@mantine/core";
 import Aside from "../../component/Navbar/navbar";
 import Protected from "../../component/Protected";
@@ -18,18 +16,18 @@ import Protected from "../../component/Protected";
 //   withCredentials: true,
 // });
 
+const Board = () => {
+  return (
+    <div>
+      <Protected>
+        <AppShell navbar={<Aside active={2}/>}>
+          <Center>
+            <Title>Board</Title>
+          </Center>
+        </AppShell>
+      </Protected>
+    </div>
+  );
+};
 
-
-const Player = () => {
-    return  <div>
-    <Protected>
-      <AppShell navbar={<Aside active={0}/>}>
-        <Center>
-          <Title>Me</Title>
-        </Center>
-      </AppShell>
-    </Protected>
-  </div>
-}
-
-export default Player
+export default Board;

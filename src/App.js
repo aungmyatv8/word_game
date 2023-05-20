@@ -2,11 +2,13 @@ import React, { Suspense } from "react";
 // import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import {Loader} from '@mantine/core' 
+// import Board from "./pages/board/board";
 
 const Home = React.lazy(() => import("./pages/home/home"));
 const NotFound = React.lazy(() => import("./pages/404/404"));
 const FindPlayer = React.lazy(() => import("./pages/find_player/find_player"));
 const Player = React.lazy(() => import("./pages/player/player"));
+const Board = React.lazy(() => import("./pages/board/board"))
 
 // const router = createBrowserRouter([
 //   {
@@ -40,6 +42,7 @@ function App() {
           <Routes>  
               <Route exact path="/" element={<Home />} />
               <Route exact path="/find" element={<FindPlayer />} />
+              <Route exact path="/board" element={<Board />} />
               <Route exact path="/me" element={<Player />} />
               <Route path="*" element={<NotFound />}/>
           </Routes>

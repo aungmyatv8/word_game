@@ -2,14 +2,23 @@ import React, { useEffect, useState } from "react";
 import { Title, Center, Loader } from "@mantine/core";
 import jwt_decode from "jwt-decode";
 import { useStyles } from "./home-style";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import {setAccessToken} from '../../reducers/user'
 
 const Home = () => {
   const { classes } = useStyles();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [googleLoader, changeGoogleLoader] = useState(false)
 
   const handleCallbackResponse = (response) => {
-    const userObject = jwt_decode(response.credential);
-    console.log("Encoded JWT", userObject);
+    // const userObject = jwt_decode(response.credential);
+    navigate("/find") 
+    
+    dispatch(setAccessToken(response.credential))
+
+    // console.log("Encoded JWT", userObject);
   };
 
   useEffect(() => {

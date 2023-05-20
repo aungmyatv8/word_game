@@ -14,17 +14,20 @@ import {
   IconLogout,
   IconBrandGoogleHome,
 } from "@tabler/icons-react";
+import {Link} from 'react-router-dom'
 
 
 const data = [
-  { icon: IconBrandGoogleHome, label: "Home" },
-  { icon: IconDeviceGamepad2, label: "Game" },
-  { icon: IconChartInfographic, label: "Leader Board" },
+  { icon: IconBrandGoogleHome, label: "Home", link: '/me' },
+  { icon: IconDeviceGamepad2, label: "Game", link: "/find" },
+  { icon: IconChartInfographic, label: "Leader Board", link: "/board" },
 
 ];
 
-function NavbarLink({ icon: Icon, label, active, onClick }) {
+function NavbarLink({ icon: Icon, label, link, active, onClick }) {
   const { classes, cx } = useStyles();
+
+  // console.log("link", link, index)
 
   return (
     <Tooltip label={label} position="right" transitionDuration={0}>
@@ -32,23 +35,26 @@ function NavbarLink({ icon: Icon, label, active, onClick }) {
         onClick={onClick}
         className={cx(classes.link, { [classes.active]: active })}
       >
-        <Icon stroke={1.5} />
+        <Link to={link}><Icon stroke={1.5} /></Link>
       </UnstyledButton>
     </Tooltip>
   );
 }
 
-function Aside() {
-  const [active, setActive] = useState(0);
+function Aside({active}) {
+  // const [active, setActive] = useState(0);
 
-  const links = data.map((link, index) => (
-    <NavbarLink
-      {...link}
-      key={link.label}
-      active={index === active}
-      onClick={() => setActive(index)}
-    />
-  ));
+  const links = data.map((link, index) => {
+    console.log(link, index)
+    return (
+      <NavbarLink
+        {...link}
+        key={link.label}
+        active={index === active}
+        // onClick={() => setActive(index)}
+      />
+    )
+  });
   return (
     <Navbar width={{ base: 80 }} p="md">
       <Center>
