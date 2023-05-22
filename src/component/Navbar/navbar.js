@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Navbar,
   Tooltip,
@@ -45,7 +45,7 @@ function Aside({active}) {
   // const [active, setActive] = useState(0);
 
   const links = data.map((link, index) => {
-    console.log(link, index)
+    // console.log(link, index)
     return (
       <NavbarLink
         {...link}

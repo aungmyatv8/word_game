@@ -5,6 +5,7 @@ const PORT = process.env.PORT || 4000;
 const server = require("http").createServer(app);
 const mongoose = require('mongoose')
 const cors = require('cors')
+const Route = require('./routes/index')
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -24,11 +25,13 @@ mongoose.connect("mongodb+srv://aungmyintmyat:veomas123@cluster0.18eromm.mongodb
 .then(_ => console.log("mongodb connected"))
 .catch(err => console.error(err))
 
-app.get("/test", (_, res) => res.json({message: "hello"}))
+// app.get("/test", (_, res) => res.json({message: "hello"}))
 
 // io.on("connection", (socket) => {
 //     console.log("main connnection");
 //   });
+app.use("/", Route)
+
 
 server.listen(PORT, () => {
     console.log("Server started");

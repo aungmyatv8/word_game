@@ -5,15 +5,17 @@ const findMatchSchmea = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "player"
     },
-    startedTime: {
+    level: {
+        type: String,
+        enum: ['bronze', 'sliver', 'gold'],
+        require: true
+    },
+    createdAt: {
         type: Date,
         default: Date.now
     },
-    expireAt: {
-        type: Date,
-        default: Date.now,
-        expires: 300000,
-    }
-})
+}, {timestamps: true})
+
+findMatchSchmea.index({createdAt: 1}, {expireAfterSeconds: 1000})
 
 module.exports = mongoose.model("find-match", findMatchSchmea )

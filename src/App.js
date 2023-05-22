@@ -2,6 +2,7 @@ import React, { Suspense } from "react";
 // import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import {Loader} from '@mantine/core' 
+import InGame from "./pages/in_game/in_game";
 // import Board from "./pages/board/board";
 
 const Home = React.lazy(() => import("./pages/home/home"));
@@ -43,6 +44,7 @@ function App() {
               <Route exact path="/" element={<Home />} />
               <Route exact path="/find" element={<FindPlayer />} />
               <Route exact path="/board" element={<Board />} />
+              <Route exact path="/game" element={<InGame />} />
               <Route exact path="/me" element={<Player />} />
               <Route path="*" element={<NotFound />}/>
           </Routes>

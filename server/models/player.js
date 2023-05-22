@@ -1,9 +1,18 @@
 const mongoose = require('mongoose')
 
 const playerSchema = new mongoose.Schema({
-    googleId: {
-        type: Text,
+    email: {
+        type: String,
         required: true,
+        unique: true
+    },
+    name: {
+        type: String,
+        required: true
+    },
+    picture: {
+        type: String,
+        required: true
     },
     level: {
         type: String,

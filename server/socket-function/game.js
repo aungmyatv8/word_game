@@ -1,14 +1,101 @@
 const {get} = require('../socket');
+const UserModel = require('../models/player');
+const FindMatchModel = require('../models/find-match');
+const { v4: uuidv4 } = require('uuid');
 
 const Io = get().of('/match');
 
 
 Io.on("connection", (socket) => {
     console.log("connection started")
+    // socket.join("waiting room", console.log("join waiting room"))
     socket.on("disconnect", () => {
         // console.log("disconnecting");
         socket.conn.close();
       });
+
+      // socket.on("join waiting room", (data) => {
+      //   console.log("join waiting room", data)
+      //   socket.join("waiting room", data)
+    
+      // })
+
+      socket.on("join_room", (data) => {
+        socket.join(data);
+      });
+
+      socket.on("find-match", async (data) => {
+        // console.log("user", data)
+        // socket.join("waiting room", console.log("join waiting room"))
+        
+        try {
+          const alreadyInFindMatch = await FindMatchModel.find({playerId: data._id});
+
+          if(!alreadyInFindMatch.length) {
+            await FindMatchModel.create({playerId: data._id, level: data.level})
+          }
+          
+
+          const findOtherPlayers = await FindMatchModel.find({
+            playerId: {
+              $ne: data._id
+            },
+            level: data.level
+          })
+
+          if(findOtherPlayers.length) {
+            const index = Math.floor(Math.random() * findOtherPlayers.length)
+            var randomChoice = findOtherPlayers[index]
+            var room = uuidv4()
+            // console.log(data._id, randomChoice.playerId)
+            // socket.emit("found match", {players: [data._id, randomChoice.playerId], room})
+            // console.log(`s ${randomChoice.playerId.toString()} found match`)
+            // socket.emit(`${randomChoice.playerId.toString()} found match`, room)
+            // socket.emit(`found match`, room)
+
+            socket.broadcast.to("waiting room").emit("waiting room", room)
+          
+          }
+
+          // socket.emit("found match", findOtherPlayers)
+          
+
+          // console.log("FindOtherPlayers", findOtherPlayers)
+          // console.log("add", addToFindMatch)
+          // return callback({
+          //   status: "ok",
+          //   data: addToFindMatch,
+          // });
+        }catch(e){
+          console.error(e)
+          // return callback({
+          //   stauts: "fail",
+          //   data: e
+          // })
+        }
+        
+      })
+      
+
+      socket.on("cancel-find-match", async(data, callback) => {
+        // console.log("data", data)
+        try {
+           await FindMatchModel.findOneAndDelete({
+            playerId: data
+          })
+          // console.log(cancelFindMatch)
+          socket.leave("waiting room")
+          // if(cancelFindMatch) {}
+          return callback({
+            status: "ok"
+          })
+        }catch(e) {
+          return callback({
+            stauts: "fail",
+            data: e
+          })
+        }
+      })
 
 
     // find two player based on level

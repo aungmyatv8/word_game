@@ -7,7 +7,7 @@ import userReducer from "./reducers/user";
 
 export default configureStore({
   reducer: {
-    token: userReducer,
+    user: userReducer,
     
   },
   middleware: (getDefaultMiddleware) =>

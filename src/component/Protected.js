@@ -8,14 +8,14 @@ import {Loader} from '@mantine/core'
 const Protected = (props) => {
     
     const navigate = useNavigate()
-    const userState = useSelector((state) => state.token);
+    const userState = useSelector((state) => state.user);
     const [loading, setLoading ] = useState(true)
     // console.log("userState", userState);
     
   
     useEffect(() => {
         const route = () => {
-            if(!userState.value) {
+            if(!userState.token) {
                 navigate("/") 
                 
                 return;
