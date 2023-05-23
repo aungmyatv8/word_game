@@ -1,8 +1,9 @@
-import React, { useState, useCallback, useNavigate} from "react";
+import React, { useState, useCallback} from "react";
 import { AppShell, Center, Title, Button, Container, Loader } from "@mantine/core";
 import Aside from "../../component/Navbar/navbar";
 import Protected from "../../component/Protected";
 import {useSelector} from 'react-redux'
+import {useNavigate} from 'react-router-dom'
 
 import { io } from "socket.io-client";
 
