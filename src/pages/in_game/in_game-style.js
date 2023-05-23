@@ -64,6 +64,14 @@ export const useStyles = createStyles(() => ({
     padding: "10px",
     color:"black"
    },
+
+   ask: {
+      margin: "10px",
+   },
+   icon: {
+      width: "15px",
+      color: "rgba(255, 255, 255, 0.5)"
+   }
  
   }));
   
