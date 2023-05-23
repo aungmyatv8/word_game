@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect} from "react";
+import React, { useState, useCallback, useNavigate} from "react";
 import { AppShell, Center, Title, Button, Container, Loader } from "@mantine/core";
 import Aside from "../../component/Navbar/navbar";
 import Protected from "../../component/Protected";
@@ -21,10 +21,12 @@ const FindPlayer = () => {
   const [isFinding, setFinding] = useState(false);
   const [findMatchId, setFindMatch] = useState(null);
   const userState = useSelector((state) => state.user);
+  const navigate = useNavigate();
 
-  // socket.on(`found match`, (data) => {
-  //   console.log("found match", data)
-  // })
+  // console.log("this find")
+ 
+
+ 
 
   // useEffect(() => {
   //   socket.on("waiting room", (data) => {
@@ -32,15 +34,36 @@ const FindPlayer = () => {
   //   })
   // })
 
+ 
+
+
+
 
   const Buttons = useCallback(() => {
+
+    const goToMatch = (result) => {
+      if(result.data.players.includes(userState.user._id)) {
+        // set game id and navigate
+        navigate("/game")
+      }
+      
+    }
+
     const findMatch = () => {
       setFinding(true);
-      socket.emit("find-match", userState.user)
-      socket.emit("join_room", "join_room")
+      socket.emit("find-match", userState.user, (response) => {
+        console.log("find match", response)
+      })
+      // socket.emit("join_room", "join_room")
+
+      socket.on(`found match`, (data) => {
+        console.log("found match", data)
+      })
+     
       // socket.emit("join waiting room", userState.user._id)
       
       // console.log("waiting on ", userState.user._id)
+      
      
       
       
@@ -95,4 +118,4 @@ const FindPlayer = () => {
   );
 };
 
-export default FindPlayer;
+export default React.memo(FindPlayer);

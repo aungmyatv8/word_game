@@ -34,4 +34,4 @@ const Protected = (props) => {
 }
 
 
-export default Protected;
+export default React.memo(Protected);

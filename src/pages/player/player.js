@@ -32,4 +32,4 @@ const Player = () => {
   </div>
 }
 
-export default Player
+export default React.memo(Player)

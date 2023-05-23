@@ -21,6 +21,7 @@ const Home = () => {
   useEffect(() => {
     const handleCallbackResponse = async (response) => {
       // const userObject = jwt_decode(response.credential);
+      // console.log("rspon", response.credential)
       navigate("/find") 
      
   

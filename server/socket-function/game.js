@@ -20,13 +20,13 @@ Io.on("connection", (socket) => {
     
       // })
 
-      socket.on("join_room", (data) => {
-        socket.join(data);
-      });
+      // socket.on("join_room", (data) => {
+      //   socket.join(data);
+      // });
 
-      socket.on("find-match", async (data) => {
+      socket.on("find-match", async (data, callback) => {
         // console.log("user", data)
-        // socket.join("waiting room", console.log("join waiting room"))
+        socket.join("waiting room")
         
         try {
           const alreadyInFindMatch = await FindMatchModel.find({playerId: data._id});
@@ -53,7 +53,11 @@ Io.on("connection", (socket) => {
             // socket.emit(`${randomChoice.playerId.toString()} found match`, room)
             // socket.emit(`found match`, room)
 
-            socket.broadcast.to("waiting room").emit("waiting room", room)
+            socket.broadcast.to("waiting room").emit("found match", {room, players: [randomChoice.playerId.toString(), data._id]})
+            return callback({
+              status: "ok",
+              data: {room, players: [randomChoice.playerId.toString(), data._id]}
+            })
           
           }
 
@@ -79,12 +83,19 @@ Io.on("connection", (socket) => {
 
       socket.on("cancel-find-match", async(data, callback) => {
         // console.log("data", data)
+        socket.leave("waiting room", (err) => {
+          if(err) {
+            console.log("levave error", err)
+          }else{
+            console.log("leave room")
+          }
+        })
         try {
            await FindMatchModel.findOneAndDelete({
             playerId: data
           })
           // console.log(cancelFindMatch)
-          socket.leave("waiting room")
+          
           // if(cancelFindMatch) {}
           return callback({
             status: "ok"

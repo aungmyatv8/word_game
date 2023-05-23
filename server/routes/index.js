@@ -5,7 +5,7 @@ const jwt_decode = require('jwt-decode')
 
 router.post("/create_login", async(req, res) => {
     const token = req.headers["authorization"];
-    console.log("token", token)
+    // console.log("token", token)
     try {
         const decoded = jwt_decode(token)
         const user = await UserModel.findOne({email: decoded.email})
@@ -20,6 +20,7 @@ router.post("/create_login", async(req, res) => {
 
         return res.json(user)
     }catch(err) {
+        console.log("err", err)
         return res.status(401).json({
             message: "You are not authorized"
         })

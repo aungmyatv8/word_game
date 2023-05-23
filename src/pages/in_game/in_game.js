@@ -62,4 +62,4 @@ const InGame = () => {
   );
 };
 
-export default InGame;
+export default React.memo(InGame);

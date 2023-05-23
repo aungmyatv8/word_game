@@ -74,4 +74,4 @@ function Aside({active}) {
   );
 }
 
-export default Aside;
+export default React.memo(Aside);
