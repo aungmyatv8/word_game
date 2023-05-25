@@ -22,6 +22,7 @@ import { useDebouncedState } from '@mantine/hooks';
 import nlp from 'compromise'
 
 import { io } from "socket.io-client";
+import Countdown from "../../component/Countdown/countdown";
 
 const socketUrl =
   process.env.NODE_ENV === "development"
@@ -38,6 +39,7 @@ const InGame = () => {
   const userState = useSelector((state) => state.user);
   const [word, setWord] = useDebouncedState('', 200);
   const [sendDisabled, setSend] = useState(true);
+  const [lastWord, setLastWord] = useState(null);
   
 
 
@@ -49,6 +51,7 @@ const InGame = () => {
       const doc = nlp(word);
       if(doc.verbs().text().length || doc.adjectives().text()) {
         setSend(false)
+        setLastWord(word[word.length - 1].toLocaleUpperCase())
       } else {
         setSend(true)
       }
@@ -63,7 +66,7 @@ const InGame = () => {
   }
 
   const onSend = () => {
-    socket.emit("send", {id: userState.user._id, word})
+    socket.emit("send", {id: userState.user._id, word, lastWord})
   }
 
 
@@ -127,8 +130,9 @@ const InGame = () => {
         <Center>
           {/* <Title>Timer</Title> */}
           <Group>
-          <Title>Timer:</Title>
-          <Title>60</Title>
+          {/* <Title>Timer: <Count</Title> */}
+          <Countdown />
+          {/* <Title>60</Title> */}
           </Group>
 
         </Center>
@@ -140,7 +144,7 @@ const InGame = () => {
               <TextInput
                 defaultValue={word}
                 // value={word}
-                icon={"G"}
+                icon={lastWord}
                 placeholder="Word"
                 className={classes.input}
                 rightSection={
