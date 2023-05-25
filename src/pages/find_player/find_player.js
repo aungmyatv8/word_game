@@ -12,7 +12,7 @@ const socketUrl =
     ? process.env.REACT_APP_DEV_SOCKET
     : process.env.REACT_APP_SERVER_SOCKET;
 
-// console.log("sock", socketUrl);
+
 
 const socket = io(`${socketUrl}/match`, {
   withCredentials: true,
@@ -20,7 +20,6 @@ const socket = io(`${socketUrl}/match`, {
 
 const FindPlayer = () => {
   const [isFinding, setFinding] = useState(false);
-  const [findMatchId, setFindMatch] = useState(null);
   const userState = useSelector((state) => state.user);
   const navigate = useNavigate();
 
@@ -43,7 +42,8 @@ const FindPlayer = () => {
   const Buttons = useCallback(() => {
 
     const goToMatch = (result) => {
-      if(result.data.players.includes(userState.user._id)) {
+      console.log("result", result)
+      if(result.players.includes(userState.user._id)) {
         // set game id and navigate
         navigate("/game")
       }
@@ -54,11 +54,13 @@ const FindPlayer = () => {
       setFinding(true);
       socket.emit("find-match", userState.user, (response) => {
         console.log("find match", response)
+        goToMatch(response.data)
       })
       // socket.emit("join_room", "join_room")
 
       socket.on(`found match`, (data) => {
         console.log("found match", data)
+        goToMatch(data)
       })
      
       // socket.emit("join waiting room", userState.user._id)
@@ -76,11 +78,7 @@ const FindPlayer = () => {
 
     const cancelFindMatch = () => {
       setFinding(false)
-      socket.emit("cancel-find-match", userState.user._id, (response) => {
-        if(response.status === "ok") {
-          setFindMatch(null)
-        }
-      })
+      socket.emit("cancel-find-match", userState.user._id, () => console.log("cancel"))
     }
 
     return isFinding ? (

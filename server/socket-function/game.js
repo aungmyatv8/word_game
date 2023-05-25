@@ -47,11 +47,10 @@ Io.on("connection", (socket) => {
             const index = Math.floor(Math.random() * findOtherPlayers.length)
             var randomChoice = findOtherPlayers[index]
             var room = uuidv4()
-            // console.log(data._id, randomChoice.playerId)
-            // socket.emit("found match", {players: [data._id, randomChoice.playerId], room})
-            // console.log(`s ${randomChoice.playerId.toString()} found match`)
-            // socket.emit(`${randomChoice.playerId.toString()} found match`, room)
-            // socket.emit(`found match`, room)
+
+            await FindMatchModel.deleteMany({
+              playerId: {$in: [data._id, randomChoice.playerId]}
+            })
 
             socket.broadcast.to("waiting room").emit("found match", {room, players: [randomChoice.playerId.toString(), data._id]})
             return callback({
