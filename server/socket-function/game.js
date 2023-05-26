@@ -23,6 +23,22 @@ Io.on("connection", (socket) => {
       // socket.on("join_room", (data) => {
       //   socket.join(data);
       // });
+      socket.on("join game room", async (data, callback) => {
+        // data includes ids, room id
+        socket.leave("waiting room")
+        console.log("room", data.room)
+        socket.join(data.room)
+        // socket.broadcast.to(data.roomId).emit()
+        // return callback({
+        //   status: "ok",
+        //   players: {
+        //     playerOne: data.players[0],
+        //     playerTwo: data.players[1]
+        //   }
+        // })
+      })
+
+
 
       socket.on("find-match", async (data, callback) => {
         // console.log("user", data)
@@ -53,6 +69,8 @@ Io.on("connection", (socket) => {
             })
 
             socket.broadcast.to("waiting room").emit("found match", {room, players: [randomChoice.playerId.toString(), data._id]})
+            
+
             return callback({
               status: "ok",
               data: {room, players: [randomChoice.playerId.toString(), data._id]}

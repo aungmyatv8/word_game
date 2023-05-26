@@ -23,6 +23,8 @@ import nlp from 'compromise'
 
 import { io } from "socket.io-client";
 import Countdown from "../../component/Countdown/countdown";
+import GameOverModal from "../../component/Modal/modal";
+import {resetTime} from "../../reducers/game";
 
 const socketUrl =
   process.env.NODE_ENV === "development"
@@ -37,9 +39,65 @@ const socket = io(`${socketUrl}/match`, {
 
 const InGame = () => {
   const userState = useSelector((state) => state.user);
+  const [playerType, setPlayer] = useState(null);
+  const {time, isFirstPlayerTurn, players} = useSelector((state) => state.game);
   const [word, setWord] = useDebouncedState('', 200);
   const [sendDisabled, setSend] = useState(true);
   const [lastWord, setLastWord] = useState(null);
+  const [victoryStatus, setVictoryStatus] = useState({
+    gameOver: false,
+    text:""
+  });
+
+
+  useEffect(() => {
+   function choosePlayer() {
+    console.log("checkoalyer", userState.user._id === players[0])
+    setPlayer(userState.user._id === players[0] ? "1" : "2");
+   }
+
+   choosePlayer()
+  }, [userState.user._id, players])
+  
+  
+
+ const Modal = useCallback(() => {
+  console.log("time", time)
+    
+    // if(time <= 0) {
+    //   // if you are player 1 and isFirstPlayerTurn -> you lose
+    //   // if you are player 2 and isFirstPlayerTurn
+    //   console.log("zero time")
+    //   if(playerType === "1") {
+    //     console.log("player 1", playerType)
+    //     return <GameOverModal isOpened={true} victory={isFirstPlayerTurn ? false : true}/>
+    //   }
+    //   else if(playerType === "2") {
+    //     console.log("player 2", playerType)
+    //     return <GameOverModal isOpened={true} victory={isFirstPlayerTurn ? true : false}/>
+  
+    //   }
+    // } else {
+    //   console.log("not oepning")
+    //   return 
+    // }
+
+    if(time) {
+      <GameOverModal isOpened={false} victory={isFirstPlayerTurn ? false : true} />
+    } else {
+      if(playerType === "1") {
+        console.log("player 1", playerType)
+        return <GameOverModal isOpened={true} victory={isFirstPlayerTurn ? false : true}/>
+      }
+      if(playerType === "2") {
+        console.log("player 2", playerType)
+        return <GameOverModal isOpened={true} victory={isFirstPlayerTurn ? true : false}/>
+  
+      }
+    }
+
+    
+  }, [time, isFirstPlayerTurn, playerType])
   
 
 
@@ -54,6 +112,7 @@ const InGame = () => {
         setLastWord(word[word.length - 1].toLocaleUpperCase())
       } else {
         setSend(true)
+        setLastWord(null)
       }
     }
  
@@ -68,6 +127,9 @@ const InGame = () => {
   const onSend = () => {
     socket.emit("send", {id: userState.user._id, word, lastWord})
   }
+
+
+
 
 
 
@@ -127,11 +189,17 @@ const InGame = () => {
   return (
     <AppShell navbar={<Aside active={1} />}>
       <Container>
+      {/* <GameOverModal isOpened={victoryStatus.gameOver} victory={victoryStatus.text}/> */}
+      {Modal()}
+      <Title align="center">You are Player {playerType}</Title>
         <Center>
           {/* <Title>Timer</Title> */}
-          <Group>
-          {/* <Title>Timer: <Count</Title> */}
+          
+          
+          <Group position="apart">
+          <Title order={2} color={isFirstPlayerTurn ? "green": "white"}>Player 1</Title> 
           <Countdown />
+          <Title order={2} color={isFirstPlayerTurn ? "white": "green"}> Player 2</Title> 
           {/* <Title>60</Title> */}
           </Group>
 

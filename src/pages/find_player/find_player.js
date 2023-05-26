@@ -2,8 +2,11 @@ import React, { useState, useCallback} from "react";
 import { AppShell, Center, Title, Button, Container, Loader } from "@mantine/core";
 import Aside from "../../component/Navbar/navbar";
 import Protected from "../../component/Protected";
-import {useSelector} from 'react-redux'
+import {useSelector, useDispatch} from 'react-redux'
 import {useNavigate} from 'react-router-dom'
+
+import {setData} from '../../reducers/game'
+
 
 import { io } from "socket.io-client";
 
@@ -21,6 +24,8 @@ const socket = io(`${socketUrl}/match`, {
 const FindPlayer = () => {
   const [isFinding, setFinding] = useState(false);
   const userState = useSelector((state) => state.user);
+  const gameState = useSelector((state) => state.game);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // console.log("this find")
@@ -33,8 +38,6 @@ const FindPlayer = () => {
   //     console.log("waiting room", data)
   //   })
   // })
-
- 
 
 
 
@@ -53,14 +56,19 @@ const FindPlayer = () => {
     const findMatch = () => {
       setFinding(true);
       socket.emit("find-match", userState.user, (response) => {
-        console.log("find match", response)
+        // console.log("find match", response)
         goToMatch(response.data)
+        socket.emit("join game room", response.data)
+        // dispatch(setData(response.data))
+        dispatch(setData({players: response.data.players, room: response.data.room}))
       })
       // socket.emit("join_room", "join_room")
 
       socket.on(`found match`, (data) => {
         console.log("found match", data)
         goToMatch(data)
+        socket.emit("join game room", data)
+        dispatch(setData({players: data.players, room: data.room}))
       })
      
       // socket.emit("join waiting room", userState.user._id)
@@ -95,7 +103,7 @@ const FindPlayer = () => {
         Find
       </Button>
     )
-  }, [isFinding, userState])
+  }, [isFinding, userState, navigate])
 
 
 
