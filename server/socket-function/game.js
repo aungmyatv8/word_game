@@ -1,43 +1,107 @@
 const {get} = require('../socket');
 const UserModel = require('../models/player');
 const FindMatchModel = require('../models/find-match');
+const PlayerModel = require('../models/player')
 const { v4: uuidv4 } = require('uuid');
 
 const Io = get().of('/match');
 
+const decideLevel = (match) => {
+  switch(match) {
+    case match <= 10:
+      return "bronze";
+    case match <= 20:
+      return "silver"
+    case match <= 30:
+      return "gold"    
+    default: 
+      return "bronze"
+  }
+}
+
 
 Io.on("connection", (socket) => {
-    console.log("connection started")
+    // console.log("connection started")
     // socket.join("waiting room", console.log("join waiting room"))
     socket.on("disconnect", () => {
         // console.log("disconnecting");
+        socket.leave("waiting room")
         socket.conn.close();
       });
 
-      // socket.on("join waiting room", (data) => {
-      //   console.log("join waiting room", data)
-      //   socket.join("waiting room", data)
-    
-      // })
+      socket.on("victory", async(id, callback) => {
+        // winner id, loser id,
+        try {
+          const winner = await PlayerModel.findById(id);
+          
 
-      // socket.on("join_room", (data) => {
-      //   socket.join(data);
-      // });
+          const winnerLevel = decideLevel(winner.win + 1)
+          
+
+          const updateWinner = await PlayerModel.findByIdAndUpdate(id, {
+            matches: winner.matches + 1,
+            win: winner.win + 1,
+            level: winnerLevel
+          })
+         
+          return callback({
+            stauts: "ok"
+          })
+        
+        }catch(e) {
+
+        }
+      })
+
+      socket.on("eliminate", async(id, callback) => {
+        try {
+          const loser = await PlayerModel.findById(id);
+          const loserLevel = decideLevel(loser.win)
+
+          const updateLoser = await PlayerModel.findByIdAndUpdate(id, {
+            matches: loser.matches + 1,
+            loss: loser.loss + 1,
+            level: loserLevel
+          })
+
+          console.log("loser", loserLevel, updateLoser)
+
+          return callback({
+            status: "ok"
+          })
+
+        }catch(e) {
+
+        }
+      })
+
+
+
       socket.on("join game room", async (data, callback) => {
         // data includes ids, room id
         socket.leave("waiting room")
-        console.log("room", data.room)
-        socket.join(data.room)
-        // socket.broadcast.to(data.roomId).emit()
-        // return callback({
-        //   status: "ok",
-        //   players: {
-        //     playerOne: data.players[0],
-        //     playerTwo: data.players[1]
-        //   }
-        // })
+        console.log("room", data)
+        socket.join(data)
+
       })
 
+      socket.on("send", async(data) => {
+        console.log("recie", {
+          playerId: data.user._id,
+          name: data.user.name,
+          picture: data.user.picture,
+          lastWord: data.lastWord,
+          word: data.word,
+          room: data.room
+        })
+        socket.broadcast.to(data.room).emit("receive", {
+          playerId: data.user._id,
+          name: data.user.name,
+          picture: data.user.picture,
+          lastWord: data.lastWord,
+          word: data.word
+        })
+      })
 
 
       socket.on("find-match", async (data, callback) => {
@@ -100,13 +164,7 @@ Io.on("connection", (socket) => {
 
       socket.on("cancel-find-match", async(data, callback) => {
         // console.log("data", data)
-        socket.leave("waiting room", (err) => {
-          if(err) {
-            console.log("levave error", err)
-          }else{
-            console.log("leave room")
-          }
-        })
+        socket.leave("waiting room")
         try {
            await FindMatchModel.findOneAndDelete({
             playerId: data

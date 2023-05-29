@@ -24,7 +24,7 @@ const socket = io(`${socketUrl}/match`, {
 const FindPlayer = () => {
   const [isFinding, setFinding] = useState(false);
   const userState = useSelector((state) => state.user);
-  const gameState = useSelector((state) => state.game);
+  // const gameState = useSelector((state) => state.game);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -54,21 +54,33 @@ const FindPlayer = () => {
     }
 
     const findMatch = () => {
+      
+      var time = 60;
+      if(userState.user.level === "bronze") {
+        time = 10;
+      } else if(userState.user.level === "silver") {
+        time = 40;
+      } else {
+        time = 20;
+      }
+      
+
+
       setFinding(true);
       socket.emit("find-match", userState.user, (response) => {
         // console.log("find match", response)
         goToMatch(response.data)
         socket.emit("join game room", response.data)
         // dispatch(setData(response.data))
-        dispatch(setData({players: response.data.players, room: response.data.room}))
+        dispatch(setData({players: response.data.players, room: response.data.room, time}))
       })
       // socket.emit("join_room", "join_room")
 
       socket.on(`found match`, (data) => {
-        console.log("found match", data)
+        // console.log("found match", data)
         goToMatch(data)
         socket.emit("join game room", data)
-        dispatch(setData({players: data.players, room: data.room}))
+        dispatch(setData({players: data.players, room: data.room, time}))
       })
      
       // socket.emit("join waiting room", userState.user._id)
@@ -103,7 +115,7 @@ const FindPlayer = () => {
         Find
       </Button>
     )
-  }, [isFinding, userState, navigate])
+  }, [isFinding, userState, navigate, dispatch])
 
 
 

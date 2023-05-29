@@ -1,21 +1,27 @@
 import React from 'react';
 import { useDisclosure } from '@mantine/hooks';
-import { Modal, Group, Button, Title } from '@mantine/core';
+import { Modal, Title } from '@mantine/core';
+import {useNavigate} from 'react-router-dom';
 
 function GameOverModal({isOpened, victory}) {
-  const [opened, { open, close }] = useDisclosure(isOpened);
+  const [opened, { _, close }] = useDisclosure(isOpened);
+  const navigate = useNavigate();
+
+  const onClose = () => {
+    close();
+    navigate("/find")
+  }
 
   return (
-    <>
-      <Modal opened={opened} onClose={close} title={victory ? "Victory" : "Eliminated"} centered>
-        {/* Modal content */}
+  
+   <React.Fragment>
+       <Modal opened={opened} onClose={onClose} title={victory ? "Victory" : "Eliminated"} centered>
         <Title>You {victory ? "Wins" : "Loses"}</Title>
       </Modal>
+   </React.Fragment>
 
-      {/* <Group position="center">
-        <Button onClick={open}>Open centered Modal</Button>
-      </Group> */}
-    </>
+ 
+ 
   );
 }
 

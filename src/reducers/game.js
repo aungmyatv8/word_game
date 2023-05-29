@@ -6,15 +6,16 @@ export const gameSlice = createSlice({
     players: [],
     room: "",
     time: 60,
+    lastWord: null,
     isFirstPlayerTurn: true
   },
   reducers: {
     setData: (state, action) => {
       state.players = action.payload.players
       state.room = action.payload.room
-      state.time = 6
+      state.time = action.payload.time ? action.payload.time : 60
     },
-    resetTime: (state, _) => {
+    resetTime: (state, time) => {
         state.time = 60
     },
     changeTime: (state, action) => {
@@ -22,12 +23,15 @@ export const gameSlice = createSlice({
     },
     changeTurn: (state, _) => {
       state.isFirstPlayerTurn = !state.isFirstPlayerTurn
+    },
+    changeLastWord: (state, action) => {
+      state.lastWord = action.payload
     }
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setData, resetTime, changeTime} =
+export const { setData, resetTime, changeTime, changeTurn, changeLastWord} =
   gameSlice.actions;
 
 export default gameSlice.reducer;
