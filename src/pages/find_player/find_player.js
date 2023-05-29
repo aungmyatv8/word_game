@@ -24,6 +24,7 @@ const socket = io(`${socketUrl}/match`, {
 const FindPlayer = () => {
   const [isFinding, setFinding] = useState(false);
   const userState = useSelector((state) => state.user);
+  console.log("find player", userState)
   // const gameState = useSelector((state) => state.game);
   const dispatch = useDispatch();
   const navigate = useNavigate();

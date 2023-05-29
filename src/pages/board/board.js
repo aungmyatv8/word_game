@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   AppShell,
   Center,
@@ -9,13 +9,15 @@ import {
   Group,
   Indicator,
   Stack,
-  Card,
+  Loader,
   Text,
 } from "@mantine/core";
 import Aside from "../../component/Navbar/navbar";
 import Protected from "../../component/Protected";
 import { useStyles } from "./board-style";
 import { IconCrown } from "@tabler/icons-react";
+import {useSelector} from 'react-redux'
+import axios from 'axios'
 
 // import { io } from "socket.io-client";
 
@@ -30,16 +32,49 @@ import { IconCrown } from "@tabler/icons-react";
 //   withCredentials: true,
 // });
 
+const SERVER_UL = 'http://localhost:4000'
+
 const Board = () => {
+  const userState = useSelector((state) => state.user);
   const { classes } = useStyles();
-  const [topFifty, setTopFifty] = useState([...Array(20).keys()])
+  const [topFifty, setTopFifty] = useState([])
+  const [loading, setLoading] = useState(true)
+  // const userState = useSelector((state) => state.user);
+
+
+  useEffect(() => {
+    async function fetch() {
+      console.log("users", userState)
+      const result = await axios.post(`${SERVER_UL}/board`, {
+        level: userState.user.level
+      }, {
+        headers: {
+          Authorization: userState.token
+        },
+        
+      }, {
+        withCredentials: true
+      })
+
+      console.log("result", result.data[0], result.data.length)
+      setTopFifty(result.data)
+      setLoading(false);
+    }
+
+    fetch()
+  }, [])
+
+
+
   return (
     <div>
       {/* <Protected>
       
       
       </Protected> */}
-      <AppShell navbar={<Aside active={2} />}>
+      
+      {
+        loading ? <Loader /> :  <AppShell navbar={<Aside active={2} />}>
         <Center>
           <Title>Leader Board</Title>
         </Center>
@@ -50,7 +85,7 @@ const Board = () => {
               variant="gradient"
               gradient={{ from: "orange", to: "red" }}
             >
-              Bronze
+              {userState.user.level}
             </Badge>
             <Center>
               <Container className={classes.boardContainer}>
@@ -63,8 +98,8 @@ const Board = () => {
                       label="2"
                       color="blue"
                     >
-                      <Avatar color="green" radius="xl" size="md">
-                        TD
+                      <Avatar color="green" radius="xl" size="md" src={topFifty[1].picture}>
+                        
                       </Avatar>
                     </Indicator>
 
@@ -81,8 +116,8 @@ const Board = () => {
                         label="1"
                         color="green"
                       >
-                        <Avatar color="yellow" radius="xl" size="lg">
-                          FT
+                        <Avatar color="yellow" radius="xl" size="lg" src={topFifty[0].picture}>
+                          
                         </Avatar>
                       </Indicator>
                     </Stack>
@@ -93,8 +128,8 @@ const Board = () => {
                       label="3"
                       color="purple"
                     >
-                      <Avatar color="green" radius="xl" size="md">
-                        TD
+                      <Avatar color="green" radius="xl" size="md" src={topFifty[2].picture}>
+                        
                       </Avatar>
                     </Indicator>
                   </Group>
@@ -102,16 +137,17 @@ const Board = () => {
                 <Center>
                   <Stack mt="xl" >
                     {
-                      topFifty.map(data => (
-                        <div className={classes.cardDesign}>
-                        <Group noWrap>
-                           <Text lineClamp={1}>{data}</Text>
-                           <Avatar color="green">Ak</Avatar>
-                           <Text lineClamp={1}>Aung Myint Myat</Text>
-                           <Text>Win: 10</Text>
-                         </Group>
-                     </div>
-                      ))
+                     topFifty.map((data, index) => {
+                      console.log("in map", data);
+                      return     <div className={classes.cardDesign}>
+                      <Group noWrap>
+                         <Text lineClamp={1}>{index + 1}</Text>
+                         <Avatar color="green" src={data.picture}></Avatar>
+                         <Text lineClamp={1}>{data.name}</Text>
+                         <Text>Win: {data.win}</Text>
+                       </Group>
+                   </div>
+                     }) 
                     }
                  
                   </Stack>
@@ -121,6 +157,8 @@ const Board = () => {
           </Container>
         </Center>
       </AppShell>
+      
+      }
     </div>
   );
 };
