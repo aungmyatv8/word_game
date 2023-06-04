@@ -10,28 +10,30 @@ const Protected = (props) => {
     const navigate = useNavigate()
     const userState = useSelector((state) => state.user);
     const [loading, setLoading ] = useState(true)
-    // console.log("userState", userState);
+    console.log("userState", userState);
     
+
+    // navigate("/") 
   
     useEffect(() => {
         const route = () => {
             if(!userState.token) {
-                navigate("/") 
+                return navigate("/") 
                 
-                return;
+                
             }
             return setLoading(false)
           
         }
         return route()
-    }, [userState, navigate, props.children])
+    }, [userState, navigate])
 
 
   
 
     // return userState.accessToken ? <React.Fragment>{props.children}</React.Fragment> : <Loader />
-    return loading ? <Loader /> : <React.Fragment>{props.children}</React.Fragment>
+    return loading ? <Loader /> : <React.Fragment><h1>Hello</h1></React.Fragment>
 }
 
 
-export default React.memo(Protected);
+export default Protected;

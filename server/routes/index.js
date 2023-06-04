@@ -62,7 +62,7 @@ router.post("/me", async(req, res) => {
 
         return res.json(findUser)
 
-        return res.json(user)
+       
     }catch(err) {
         console.log("err", err)
         return res.status(401).json({

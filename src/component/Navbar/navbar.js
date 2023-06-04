@@ -5,6 +5,7 @@ import {
   Stack,
   Center,
   UnstyledButton,
+  ActionIcon,
 } from "@mantine/core";
 import logo from "../../logo.svg";
 import { useStyles } from "./nvabar-style";
@@ -14,7 +15,7 @@ import {
   IconLogout,
   IconBrandGoogleHome,
 } from "@tabler/icons-react";
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 
 
 const data = [
@@ -43,6 +44,9 @@ function NavbarLink({ icon: Icon, label, link, active, onClick }) {
 
 function Aside({active}) {
   // const [active, setActive] = useState(0);
+  const navigate = useNavigate()
+
+  // const Logout = useNavigate("/")
 
   const links = data.map((link, index) => {
     // console.log(link, index)
@@ -67,7 +71,11 @@ function Aside({active}) {
       </Navbar.Section>
       <Navbar.Section>
         <Stack justify="center" spacing={0}>
-          <NavbarLink icon={IconLogout} label="Logout" />
+          <ActionIcon mx="sm" onClick={() => navigate("/")}>
+            <IconLogout />
+          </ActionIcon>
+        
+          {/* <NavbarLink icon={IconLogout} label="Logout" href="/"  /> */}
         </Stack>
       </Navbar.Section>
     </Navbar>

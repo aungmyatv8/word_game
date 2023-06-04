@@ -6,6 +6,7 @@ import Aside from "../../component/Navbar/navbar";
 import Protected from "../../component/Protected";
 import { useSelector} from 'react-redux';
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom';
 
 // import { io } from "socket.io-client";
 
@@ -28,9 +29,12 @@ const Player = () => {
   const userState = useSelector(state => state.user);
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState(null);
-
+  const navigate = useNavigate()
   
   useEffect(() => {
+    if(!userState.token) {
+      return navigate("/")
+    }
     async function fetch() {
       console.log("users", userState)
       const result = await axios.post(`${SERVER_UL}/me`, {
@@ -50,11 +54,11 @@ const Player = () => {
     }
 
     fetch()
-  }, [])
+  }, [userState, navigate])
 
 
     return  <div>
-    <Protected>
+
         {
           loading ? <Loader /> : <AppShell navbar={<Aside active={0}/>}>
           <Center>
@@ -68,11 +72,12 @@ const Player = () => {
               <Text>Win: {user.win}</Text>
               <Text>Loss: {user.loss}</Text>
               <Text>Matches: {user.matches}</Text>
+              <Text>Level: {user.level}</Text>
             </Group>
           </Center>
         </AppShell>
         }
-    </Protected>
+
   </div>
 }
 

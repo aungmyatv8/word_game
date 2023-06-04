@@ -26,12 +26,19 @@ export const gameSlice = createSlice({
     },
     changeLastWord: (state, action) => {
       state.lastWord = action.payload
+    },
+    resetGame: (state, action) => {
+      state.players = [];
+      state.romm = "";
+      state.time = 60;
+      state.lastWord = null;
+      state.isFirstPlayerTurn = true
     }
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setData, resetTime, changeTime, changeTurn, changeLastWord} =
+export const { setData, resetTime, changeTime, changeTurn, changeLastWord, resetGame} =
   gameSlice.actions;
 
 export default gameSlice.reducer;

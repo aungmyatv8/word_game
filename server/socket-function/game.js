@@ -15,7 +15,7 @@ const decideLevel = (match) => {
     case match <= 30:
       return "gold"    
     default: 
-      return "bronze"
+      return "gold"
   }
 }
 

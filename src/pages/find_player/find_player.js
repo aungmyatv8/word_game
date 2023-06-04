@@ -1,4 +1,4 @@
-import React, { useState, useCallback} from "react";
+import React, { useState, useCallback, useEffect} from "react";
 import { AppShell, Center, Title, Button, Container, Loader } from "@mantine/core";
 import Aside from "../../component/Navbar/navbar";
 import Protected from "../../component/Protected";
@@ -24,14 +24,18 @@ const socket = io(`${socketUrl}/match`, {
 const FindPlayer = () => {
   const [isFinding, setFinding] = useState(false);
   const userState = useSelector((state) => state.user);
-  console.log("find player", userState)
+ 
   // const gameState = useSelector((state) => state.game);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // console.log("this find")
  
-
+  useEffect(() => {
+    if(!userState.token) {
+      return navigate("/")
+    }
+  }, [userState.token, navigate])
  
 
   // useEffect(() => {
@@ -58,7 +62,7 @@ const FindPlayer = () => {
       
       var time = 60;
       if(userState.user.level === "bronze") {
-        time = 10;
+        time = 60;
       } else if(userState.user.level === "silver") {
         time = 40;
       } else {
@@ -84,9 +88,6 @@ const FindPlayer = () => {
         dispatch(setData({players: data.players, room: data.room, time}))
       })
      
-      // socket.emit("join waiting room", userState.user._id)
-      
-      // console.log("waiting on ", userState.user._id)
       
      
       
@@ -101,6 +102,8 @@ const FindPlayer = () => {
       setFinding(false)
       socket.emit("cancel-find-match", userState.user._id, () => console.log("cancel"))
     }
+
+
 
     return isFinding ? (
       <div>
@@ -122,7 +125,7 @@ const FindPlayer = () => {
 
   return (
     <div>
-      {/* <Protected> */}
+
       <AppShell navbar={<Aside active={1} />}>
         <Container>
           <Center>
@@ -133,7 +136,7 @@ const FindPlayer = () => {
           </Center>
         </Container>
       </AppShell>
-      {/* </Protected> */}
+
     </div>
   );
 };

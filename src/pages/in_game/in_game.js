@@ -7,8 +7,6 @@ import {
   Title,
   Text,
   Container,
-  Loader,
-  Stack,
   Group,
   Tooltip,
   ActionIcon,
@@ -25,6 +23,7 @@ import { io } from "socket.io-client";
 import Countdown from "../../component/Countdown/countdown";
 import GameOverModal from "../../component/Modal/modal";
 import { resetTime, changeTurn, changeLastWord } from "../../reducers/game";
+import {useNavigate} from 'react-router-dom'
 
 const socketUrl =
   process.env.NODE_ENV === "development"
@@ -44,10 +43,8 @@ const InGame = () => {
   const [word, setWord] = useDebouncedState("", 200);
   const [sendDisabled, setSend] = useState(true);
   // const [lastWord, setLastWord] = useState(null);
-  const [victoryStatus, setVictoryStatus] = useState({
-    gameOver: false,
-    text: "",
-  });
+  const navigate = useNavigate();
+
 
   const dispatch = useDispatch();
 
@@ -55,6 +52,12 @@ const InGame = () => {
 
   const [messages, setMessage] = useState([]);
   const { classes } = useStyles();
+
+  useEffect(() => {
+    if(!userState.token) {
+      return navigate("/")
+    }
+  }, [userState.token, navigate])
 
   useEffect(() => {
     console.log("isFirst", isFirstPlayerTurn, playerType);
@@ -71,13 +74,16 @@ const InGame = () => {
   }, [room, dispatch]);
 
   useEffect(() => {
+    if(!userState.token) {
+      return navigate('/')
+    }
     function choosePlayer() {
       // console.log("checkoalyer", userState.user._id === players[0])
       setPlayer(userState.user._id === players[0] ? "1" : "2");
     }
 
     choosePlayer();
-  }, [userState.user._id, players]);
+  }, [userState, players, navigate]);
 
   const Modal = useCallback(() => {
     if (time) {
@@ -121,7 +127,7 @@ const InGame = () => {
         );
       }
     }
-  }, [time, isFirstPlayerTurn, playerType, userState.user._id]);
+  }, [time, isFirstPlayerTurn, playerType, userState]);
 
   useEffect(() => {
     const split = word.split(" ");
@@ -130,17 +136,27 @@ const InGame = () => {
     } else {
       const doc = nlp(word);
       if (doc.verbs().text().length || doc.adjectives().text()) {
-        setSend(false);
+        // setSend(false);
+        if(lastWord === null) {
+          setSend(false);
+        } else {
+          if(lastWord.toLocaleLowerCase() === word[0] || lastWord === word[0] ) {
+            setSend(false)
+          } else {
+            setSend(true)
+          }
+        }
         // setLastWord(word[word.length - 1].toLocaleUpperCase())
       } else {
         setSend(true);
         // setLastWord(null)
       }
     }
-  }, [word]);
+  }, [word, lastWord]);
 
   const onChange = (e) => {
     setWord(e.currentTarget.value);
+    
   };
 
   const onSend = () => {
@@ -256,7 +272,7 @@ const InGame = () => {
         },
       ]);
     });
-  }, [dispatch, userState.user.level]);
+  }, [dispatch, userState]);
 
   return (
     <AppShell navbar={<Aside active={1} />}>
@@ -303,6 +319,7 @@ const InGame = () => {
         </Center>
       </Container>
     </AppShell>
+
   );
 };
 
